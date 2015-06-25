@@ -17,7 +17,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "bl": "~0.9.4"
+    "bl": "~0.9.4",
+    "lodash": "^3.9.3",
+    "procstreams": "^0.3.0",
+    "promise": "^7.0.3",
+    "wires-class": "^1.0.0"
   },
   "devDependencies": {
     "tape": "~2.12.3",
