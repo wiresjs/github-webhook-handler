@@ -98,6 +98,7 @@ handler.on('push', function(event) {
             if (event.payload.ref.indexOf(branch) > -1) {
                var cmd = branches[branch]
                var bash = new Bash();
+               console.log(cmd)
                bash.add(cmd)
                bash.call({
                   printOutput: true
