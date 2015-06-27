@@ -2,7 +2,7 @@ var http = require('http')
 var createHandler = require('./github-webhook-handler')
 var handler = createHandler({
    path: '/webhook',
-   secret: 'myhashsecret'
+   secret: process.env.secret || 'myhashsecret'
 })
 var fs = require("fs");
 var path = require("path");
@@ -75,54 +75,50 @@ var Bash = Class.extend({
 })
 
 
-
+var port = process.env.PORT || 7777;
 http.createServer(function(req, res) {
+   console.log("Listening on http://localhost:" + port + "/webhook")
    handler(req, res, function(err) {
       res.statusCode = 404
       res.end('no such location')
    })
-}).listen(7777)
+}).listen(port)
 
 handler.on('error', function(err) {
    console.error('Error:', err.message)
 })
 
 var current = process.cwd();
-var config = JSON.parse(fs.readFileSync(path.join(current, "github.json")));
+var conf = path.join(current, "github.json");
+if (fs.existsSync(conf)) {
+   console.log("Config loaded")
+   var config = JSON.parse(fs.readFileSync(conf));
 
-handler.on('push', function(event) {
-   for (var repName in config) {
-      if (repName === event.payload.repository.name) {
-         var branches = config[repName];
-         for (var branch in branches) {
-            if (event.payload.ref.indexOf(branch) > -1) {
-               var cmd = branches[branch]
-               var bash = new Bash();
-               console.log(cmd)
-               bash.add(cmd)
-               bash.call({
-                  printOutput: true
-               }).then(function(d) {
-                  console.log(d)
-               }).catch(function(e) {
-                  console.log(e)
-               })
+   handler.on('push', function(event) {
+      for (var repName in config) {
+         if (repName === event.payload.repository.name) {
+            var branches = config[repName];
+            for (var branch in branches) {
+               if (event.payload.ref.indexOf(branch) > -1) {
+                  var cmd = branches[branch]
+                  var bash = new Bash();
+                  console.log(cmd)
+                  bash.add(cmd)
+                  bash.call({
+                     printOutput: true
+                  }).then(function(d) {
+                     console.log(d)
+                  }).catch(function(e) {
+                     console.log(e)
+                  })
 
+               }
             }
          }
       }
-   }
-   var repositoryName = event.payload.repository.name;
-   var branch = event.payload.ref;
-})
-
-/*
-handler.on('issues', function(event) {
-   console.log('Received an issue event for %s action=%s: #%d %s',
-      event.payload.repository.name,
-      event.payload.action,
-      event.payload.issue.number,
-      event.payload.issue.title)
-})
-
-*/
+      var repositoryName = event.payload.repository.name;
+      var branch = event.payload.ref;
+   })
+} else {
+   console.log("no config")
+}
