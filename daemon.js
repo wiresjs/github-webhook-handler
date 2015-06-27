@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var http = require('http')
 var createHandler = require('./github-webhook-handler')
 var handler = createHandler({
