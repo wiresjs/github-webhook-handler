@@ -78,8 +78,8 @@ var Bash = Class.extend({
 
 
 var port = process.env.PORT || 7777;
+console.log("Listening on http://localhost:" + port + "/webhook")
 http.createServer(function(req, res) {
-   console.log("Listening on http://localhost:" + port + "/webhook")
    handler(req, res, function(err) {
       res.statusCode = 404
       res.end('no such location')
