@@ -1,13 +1,13 @@
 {
-   "name": "wireshook",
-   "version": "0.4.0",
+   "name": "github-webhook-handler",
+   "version": "0.4.1",
    "description": "Web handler / middleware for processing GitHub Webhooks",
    "main": "github-webhook-handler.js",
    "scripts": {
       "test": "node test.js"
    },
    "bin": {
-      "webhook": "./daemon.js"
+      "github-webhook-handler": "./daemon.js"
    },
    "keywords": [
       "github",
